@@ -33,31 +33,52 @@ const data = snapshotBones(root, 'card')
 mountSkeleton(target, data)
 ```
 
-## Usage (script tag / CDN)
+## Usage (script tag) — GitHub + jsDelivr
 
-The IIFE build exposes a global **`BoneyardTailwind`** with: `snapshotBones`, `mountSkeleton`, `skeletonHTML`, `boneClassList`, `pickBreakpoint`, `toJSON`.
+[jsDelivr](https://www.jsdelivr.com/?docs=gh) can serve any file from a public GitHub repo. That is a simple way to use this project as a CDN without npm or your own server.
 
-Always load **Tailwind** before or with your page (this library does not ship Tailwind CSS). Order matters: Tailwind first, then this script, then your code.
+### 1. Build and commit the bundle
+
+```bash
+npm run build:iife
+git add dist/boneyard-tailwind.min.js
+git commit -m "Add IIFE bundle for jsDelivr"
+git push
+```
+
+Keep `dist/boneyard-tailwind.min.js` in the repo so the CDN URL always has a file to serve.
+
+### 2. URL pattern
+
+```
+https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@REF/dist/boneyard-tailwind.min.js
+```
+
+Replace **`GITHUB_USER`**, **`GITHUB_REPO`**, and **`REF`**:
+
+- **`REF`** = branch name (e.g. `main`) for latest, or a **git tag** (e.g. `v0.1.0`) / **commit SHA** for a stable, cache-friendly production URL.
+
+### 3. Embed in your page
+
+The IIFE exposes a global **`BoneyardTailwind`**: `snapshotBones`, `mountSkeleton`, `skeletonHTML`, `boneClassList`, `pickBreakpoint`, `toJSON`.
+
+Load **Tailwind** first (this repo does not ship CSS), then the script, then your code:
 
 ```html
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://YOUR-CDN/boneyard-tailwind.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@v0.1.0/dist/boneyard-tailwind.min.js"></script>
 <script>
   const data = BoneyardTailwind.snapshotBones(document.getElementById('card'), 'card')
   BoneyardTailwind.mountSkeleton(document.getElementById('skeleton-host'), data)
 </script>
 ```
 
-### Ways to host the file
+### Other hosting (optional)
 
-1. **Your own server / CDN** — Run `npm run build:iife`, upload `dist/boneyard-tailwind.min.js`, use your absolute URL in `src`.
-2. **GitHub + jsDelivr** — Commit `dist/boneyard-tailwind.min.js`, then (replace user, repo, branch):
-   `https://cdn.jsdelivr.net/gh/USER/REPO@BRANCH/dist/boneyard-tailwind.min.js`  
-   Pin a tag or commit hash instead of `main` for stable production URLs.
-3. **npm + jsDelivr / unpkg** — After `npm publish`, the `unpkg` / `jsdelivr` fields in `package.json` point CDNs at the minified bundle, e.g.  
-   `https://cdn.jsdelivr.net/npm/boneyard-tailwind@0.1.0/dist/boneyard-tailwind.min.js`
+- **Self-hosted** — Upload `dist/boneyard-tailwind.min.js` anywhere and point `src` at that URL.
+- **npm** — After `npm publish`, use e.g. `https://cdn.jsdelivr.net/npm/boneyard-tailwind@0.1.0/dist/boneyard-tailwind.min.js` (see `unpkg` / `jsdelivr` in `package.json`).
 
-A minimal local check (no modules): open `demo/cdn.html` over HTTP; it loads `../dist/boneyard-tailwind.min.js`.
+Local smoke test (no GitHub): open `demo/cdn.html` over HTTP; it loads `../dist/boneyard-tailwind.min.js`.
 
 ## Responsive snapshots
 

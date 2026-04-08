@@ -1,68 +1,128 @@
 # boneyard-tailwind
 
-Vanilla JS helpers to **snapshot rendered DOM** into skeleton “bones” and **render them with Tailwind CSS only** (pulse placeholders, arbitrary position/size utilities). Inspired by the idea behind [0xGF/boneyard](https://github.com/0xGF/boneyard), without React.
+**Snapshot your real UI in the browser, get a skeleton loader that matches it—using only Tailwind CSS classes.**  
+Works with plain HTML, PHP, Vue, etc. No React required.
 
-## Features
+Conceptually similar to [Boneyard](https://github.com/0xGF/boneyard) (auto-generated skeletons from layout); this repo is a small **vanilla JavaScript** + **Tailwind** toolkit.
 
-- `snapshotBones(element)` — reads layout from the browser, outputs JSON-friendly bone rects (`x`/`w` as % of root, `y`/`h` in px).
-- `mountSkeleton` / `skeletonHTML` — builds markup using Tailwind classes (`animate-pulse`, `bg-slate-*`, `left-[…%]`, etc.).
-- `pickBreakpoint` — choose the best snapshot when you store multiple widths under `breakpoints`.
+---
 
-## Requirements
+## Table of contents
 
-- **Tailwind** must be available where the skeleton renders (e.g. [Tailwind CDN](https://cdn.tailwindcss.com) for JIT, or your own build). Dynamic classes are mostly **arbitrary values**; if you use a static build, **safelist** or scan generated HTML so they are not purged.
+- [What you get](#what-you-get)
+- [What you need](#what-you-need)
+- [Quick start](#quick-start)
+- [Try the demos](#try-the-demos)
+- [How to use in your project](#how-to-use-in-your-project)
+  - [Option A: ES modules](#option-a-es-modules-local-or-bundler)
+  - [Option B: Script tag (GitHub CDN)](#option-b-script-tag-github-cdn)
+- [API (short reference)](#api-short-reference)
+- [Output JSON shape](#output-json-shape)
+- [Responsive layouts (breakpoints)](#responsive-layouts-breakpoints)
+- [npm scripts](#npm-scripts)
+- [License](#license)
 
-## Try the demo
+---
 
-Serve the folder over HTTP (ES modules), then open:
+## What you get
 
-`demo/index.html`
+| Piece | What it does |
+| ----- | ------------- |
+| **`snapshotBones(element)`** | Reads the live DOM and returns rectangles (“bones”): horizontal position/width as **%** of the container, vertical as **px**. |
+| **`mountSkeleton` / `skeletonHTML`** | Builds placeholder markup using Tailwind (`animate-pulse`, slate grays, arbitrary `left-[…%]`, etc.). |
+| **`pickBreakpoint`** | If you saved several snapshots for different widths, picks the best one for the current container. |
 
-Example with XAMPP: `http://localhost/projects/random/skeleton-loading/demo/index.html`  
-IIFE smoke test: `demo/cdn.html` (requires `npm run build:iife` first).
+---
 
-## Usage (ES module)
+## What you need
+
+1. **Tailwind CSS** on any page where you show the skeleton—e.g. the [Tailwind Play CDN](https://cdn.tailwindcss.com) or your own build.  
+   This package is **JavaScript only**; it does **not** ship CSS.
+
+2. If you use a **static Tailwind build** (not the CDN), generated classes use many **arbitrary values**. You must **safelist** those patterns or include the generated HTML in Tailwind’s content scan, or the styles will be purged.
+
+---
+
+## Quick start
+
+1. Clone or copy this repository.
+2. Run `npm install` (installs the dev tool that builds the browser bundle).
+3. Choose how you load the code:
+
+| Goal | Do this |
+| ---- | ------- |
+| Develop / use with a bundler | Import from `src/index.js` (see [Option A](#option-a-es-modules-local-or-bundler)). |
+| Use a single file from GitHub | Run `npm run build:iife`, commit `dist/boneyard-tailwind.min.js`, use [jsDelivr](https://www.jsdelivr.com/?docs=gh) (see [Option B](#option-b-script-tag-github-cdn)). |
+
+---
+
+## Try the demos
+
+Your dev server must use **HTTP** or **HTTPS**. Opening files as `file://` will **not** load ES modules correctly.
+
+| File | Purpose |
+| ---- | ------- |
+| [`demo/index.html`](demo/index.html) | Full UI: snapshot, JSON output, side‑by‑side real UI vs skeleton. |
+| [`demo/cdn.html`](demo/cdn.html) | Minimal page using the **IIFE** file (`dist/boneyard-tailwind.min.js`). Run `npm run build:iife` first. |
+
+Example (adjust path to your server):
+
+`http://localhost/.../skeleton-loading/demo/index.html`
+
+---
+
+## How to use in your project
+
+### Option A: ES modules (local or bundler)
 
 ```js
 import { snapshotBones, mountSkeleton } from './src/index.js'
 
 const root = document.getElementById('card')
-const target = document.getElementById('skeleton-host')
+const host = document.getElementById('skeleton-host')
 
 const data = snapshotBones(root, 'card')
-mountSkeleton(target, data)
+mountSkeleton(host, data)
 ```
 
-## Usage (script tag) — GitHub + jsDelivr
+Point the import at your real path (or your bundler’s alias).
 
-[jsDelivr](https://www.jsdelivr.com/?docs=gh) can serve any file from a public GitHub repo. That is a simple way to use this project as a CDN without npm or your own server.
+---
 
-### 1. Build and commit the bundle
+### Option B: Script tag (GitHub CDN)
+
+Building produces **`dist/boneyard-tailwind.min.js`**, which sets a global **`BoneyardTailwind`**.
+
+#### Step 1 — Build and push the file
 
 ```bash
 npm run build:iife
 git add dist/boneyard-tailwind.min.js
-git commit -m "Add IIFE bundle for jsDelivr"
+git commit -m "Add IIFE bundle for CDN"
 git push
 ```
 
-Keep `dist/boneyard-tailwind.min.js` in the repo so the CDN URL always has a file to serve.
+Keep that file in the repo if you use **GitHub + jsDelivr**.
 
-### 2. URL pattern
+#### Step 2 — CDN URL (jsDelivr + GitHub)
 
-```
+Use this pattern (replace the placeholders):
+
+```text
 https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@REF/dist/boneyard-tailwind.min.js
 ```
 
-Replace **`GITHUB_USER`**, **`GITHUB_REPO`**, and **`REF`**:
+| Placeholder | Meaning |
+| ----------- | -------- |
+| `GITHUB_USER` | Your GitHub username or organization |
+| `GITHUB_REPO` | Repository name |
+| `REF` | Branch (`main`), **tag** (`v0.1.0`), or **commit SHA** — prefer tag or SHA in production for stable URLs |
 
-- **`REF`** = branch name (e.g. `main`) for latest, or a **git tag** (e.g. `v0.1.0`) / **commit SHA** for a stable, cache-friendly production URL.
+#### Step 3 — HTML (order matters)
 
-### 3. Embed in your page
-
-The IIFE exposes a global **`BoneyardTailwind`**: `snapshotBones`, `mountSkeleton`, `skeletonHTML`, `boneClassList`, `pickBreakpoint`, `toJSON`.
-
-Load **Tailwind** first (this repo does not ship CSS), then the script, then your code:
+1. Tailwind  
+2. `boneyard-tailwind.min.js`  
+3. Your script  
 
 ```html
 <script src="https://cdn.tailwindcss.com"></script>
@@ -73,16 +133,63 @@ Load **Tailwind** first (this repo does not ship CSS), then the script, then you
 </script>
 ```
 
-### Other hosting (optional)
+#### Other ways to host the same file
 
-- **Self-hosted** — Upload `dist/boneyard-tailwind.min.js` anywhere and point `src` at that URL.
-- **npm** — After `npm publish`, use e.g. `https://cdn.jsdelivr.net/npm/boneyard-tailwind@0.1.0/dist/boneyard-tailwind.min.js` (see `unpkg` / `jsdelivr` in `package.json`).
+- **Your own server** — Upload `dist/boneyard-tailwind.min.js` and use your full URL in `src`.
+- **npm** — After `npm publish`, something like:  
+  `https://cdn.jsdelivr.net/npm/boneyard-tailwind@0.1.0/dist/boneyard-tailwind.min.js`  
+  (see `unpkg` / `jsdelivr` in [`package.json`](package.json).)
 
-Local smoke test (no GitHub): open `demo/cdn.html` over HTTP; it loads `../dist/boneyard-tailwind.min.js`.
+---
 
-## Responsive snapshots
+## API (short reference)
 
-Resize the viewport (or capture in different sessions), snapshot each time, and merge:
+| Export / global method | Role |
+| ---------------------- | ---- |
+| `snapshotBones(el, name?, config?)` | Returns one snapshot object (`width`, `height`, `bones`, …). |
+| `mountSkeleton(container, snapshot, options?)` | Inserts skeleton DOM into `container`. |
+| `skeletonHTML(snapshot, options?)` | Same layout as string HTML (for SSR or manual insert). |
+| `boneClassList(bone)` | Tailwind class string for a single bone. |
+| `pickBreakpoint(breakpoints, widthPx)` | Returns the snapshot object for the best matching key. |
+| `toJSON(snapshotOrBundle)` | Pretty-printed JSON string (e.g. for download or textarea). |
+
+Global namespace (IIFE): **`BoneyardTailwind`** with the same names as above.
+
+---
+
+## Output JSON shape
+
+Each **snapshot** looks like this (values are examples):
+
+```json
+{
+  "name": "card",
+  "viewportWidth": 768,
+  "width": 768,
+  "height": 220,
+  "bones": [
+    { "x": 0, "y": 12, "w": 20.5, "h": 48, "r": "50%" },
+    { "x": 28, "y": 16, "w": 65, "h": 20, "r": 8, "c": true }
+  ]
+}
+```
+
+| Field | Meaning |
+| ----- | -------- |
+| `x`, `w` | Horizontal position and width as **percentage** of the snapshot root width |
+| `y`, `h` | Vertical position and height in **pixels** |
+| `r` | Border radius (number = px, or `"50%"`, or a CSS string) |
+| `c` | Optional; if `true`, drawn as a lighter “container” bone |
+
+You can save that JSON in your app and call `mountSkeleton` while data is loading—no need to run `snapshotBones` in production unless you want a dev tool.
+
+---
+
+## Responsive layouts (breakpoints)
+
+1. Resize the window (or capture on different devices).
+2. Call `snapshotBones` at each width.
+3. Store results under string keys (widths), e.g. `"375"`, `"768"`.
 
 ```json
 {
@@ -93,15 +200,26 @@ Resize the viewport (or capture in different sessions), snapshot each time, and 
 }
 ```
 
-At runtime: `pickBreakpoint(bundle.breakpoints, containerEl.offsetWidth)` then `mountSkeleton(…)`.
+At runtime:
 
-## Scripts
+```js
+const snapshot = pickBreakpoint(bundle.breakpoints, containerEl.offsetWidth)
+mountSkeleton(host, snapshot)
+```
 
-| Command              | Output                          |
-| -------------------- | ------------------------------- |
-| `npm install`        | Installs `esbuild` (dev).       |
-| `npm run build:iife` | Minified `dist/boneyard-tailwind.min.js`. |
-| `npm run build:iife:dev` | `dist/boneyard-tailwind.js` + source map. |
+---
+
+## npm scripts
+
+| Command | Result |
+| ------- | ------ |
+| `npm install` | Installs dev dependencies (e.g. `esbuild`). |
+| `npm run build:iife` | Writes **`dist/boneyard-tailwind.min.js`** (minified IIFE). |
+| `npm run build:iife:dev` | Writes **`dist/boneyard-tailwind.js`** plus source map. |
+
+`prepublishOnly` runs the IIFE build before `npm publish`, so `dist` stays in sync if you publish to npm.
+
+---
 
 ## License
 

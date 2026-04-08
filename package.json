@@ -27,6 +27,14 @@
     "vanilla"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JanzenDC/skeleton-loading.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JanzenDC/skeleton-loading/issues"
+  },
+  "homepage": "https://github.com/JanzenDC/skeleton-loading#readme",
   "devDependencies": {
     "esbuild": "^0.25.0"
   }

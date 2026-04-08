@@ -3,6 +3,8 @@
 **Snapshot your real UI in the browser, get a skeleton loader that matches it—using only Tailwind CSS classes.**  
 Works with plain HTML, PHP, Vue, etc. No React required.
 
+**Repository:** [github.com/JanzenDC/skeleton-loading](https://github.com/JanzenDC/skeleton-loading)
+
 Conceptually similar to [Boneyard](https://github.com/0xGF/boneyard) (auto-generated skeletons from layout); this repo is a small **vanilla JavaScript** + **Tailwind** toolkit.
 
 ---
@@ -45,7 +47,13 @@ Conceptually similar to [Boneyard](https://github.com/0xGF/boneyard) (auto-gener
 
 ## Quick start
 
-1. Clone or copy this repository.
+1. Clone this repository:
+
+   ```bash
+   git clone https://github.com/JanzenDC/skeleton-loading.git
+   cd skeleton-loading
+   ```
+
 2. Run `npm install` (installs the dev tool that builds the browser bundle).
 3. Choose how you load the code:
 
@@ -64,6 +72,8 @@ Your dev server must use **HTTP** or **HTTPS**. Opening files as `file://` will 
 | ---- | ------- |
 | [`demo/index.html`](demo/index.html) | Full UI: snapshot, JSON output, side‑by‑side real UI vs skeleton. |
 | [`demo/cdn.html`](demo/cdn.html) | Minimal page using the **IIFE** file (`dist/boneyard-tailwind.min.js`). Run `npm run build:iife` first. |
+
+On GitHub: [demo folder](https://github.com/JanzenDC/skeleton-loading/tree/main/demo).
 
 Example (adjust path to your server):
 
@@ -104,19 +114,22 @@ git push
 
 Keep that file in the repo if you use **GitHub + jsDelivr**.
 
-#### Step 2 — CDN URL (jsDelivr + GitHub)
+#### Step 2 — CDN URL ([jsDelivr](https://www.jsdelivr.com/?docs=gh) + this repo)
 
-Use this pattern (replace the placeholders):
+Ready-to-use URLs for **[JanzenDC/skeleton-loading](https://github.com/JanzenDC/skeleton-loading)**:
+
+| `REF` | URL |
+| ----- | ----- |
+| Latest on `main` | `https://cdn.jsdelivr.net/gh/JanzenDC/skeleton-loading@main/dist/boneyard-tailwind.min.js` |
+| Version tag (after you tag a release) | `https://cdn.jsdelivr.net/gh/JanzenDC/skeleton-loading@v0.1.0/dist/boneyard-tailwind.min.js` |
+
+For production, prefer a **git tag** or **commit SHA** instead of `main` so the URL does not change unexpectedly when you push.
+
+General pattern for any GitHub repo:
 
 ```text
-https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@REF/dist/boneyard-tailwind.min.js
+https://cdn.jsdelivr.net/gh/USER/REPO@REF/dist/boneyard-tailwind.min.js
 ```
-
-| Placeholder | Meaning |
-| ----------- | -------- |
-| `GITHUB_USER` | Your GitHub username or organization |
-| `GITHUB_REPO` | Repository name |
-| `REF` | Branch (`main`), **tag** (`v0.1.0`), or **commit SHA** — prefer tag or SHA in production for stable URLs |
 
 #### Step 3 — HTML (order matters)
 
@@ -126,7 +139,7 @@ https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@REF/dist/boneyard-tailwind.m
 
 ```html
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/gh/GITHUB_USER/GITHUB_REPO@v0.1.0/dist/boneyard-tailwind.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/JanzenDC/skeleton-loading@main/dist/boneyard-tailwind.min.js"></script>
 <script>
   const data = BoneyardTailwind.snapshotBones(document.getElementById('card'), 'card')
   BoneyardTailwind.mountSkeleton(document.getElementById('skeleton-host'), data)

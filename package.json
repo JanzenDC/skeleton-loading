@@ -1,0 +1,33 @@
+{
+  "name": "boneyard-tailwind",
+  "version": "0.1.0",
+  "description": "Auto-generated skeleton loaders from DOM snapshots; Tailwind-only styling; vanilla JS.",
+  "type": "module",
+  "main": "src/index.js",
+  "unpkg": "dist/boneyard-tailwind.min.js",
+  "jsdelivr": "dist/boneyard-tailwind.min.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./snapshot": "./src/snapshot.js",
+    "./render": "./src/render.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build:iife": "esbuild src/index.js --bundle --format=iife --global-name=BoneyardTailwind --outfile=dist/boneyard-tailwind.min.js --minify",
+    "build:iife:dev": "esbuild src/index.js --bundle --format=iife --global-name=BoneyardTailwind --outfile=dist/boneyard-tailwind.js --sourcemap",
+    "prepublishOnly": "npm run build:iife"
+  },
+  "keywords": [
+    "skeleton",
+    "loading",
+    "tailwind",
+    "vanilla"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

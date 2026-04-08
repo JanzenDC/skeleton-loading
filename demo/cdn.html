@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CDN-style usage (IIFE)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- After publishing or uploading dist/, point this at your CDN URL -->
+    <script src="../dist/boneyard-tailwind.min.js"></script>
+  </head>
+  <body class="bg-slate-50 p-8 text-slate-900">
+    <p class="mb-4 text-sm text-slate-600">
+      Loads <code class="font-mono text-xs">dist/boneyard-tailwind.min.js</code> as a classic script → global
+      <code class="font-mono text-xs">BoneyardTailwind</code>. Serve this folder over HTTP.
+    </p>
+    <div
+      id="card"
+      class="max-w-md rounded-xl border border-slate-200 bg-white p-4"
+    >
+      <div class="h-4 w-3/4 rounded bg-slate-200"></div>
+      <p class="mt-3 text-sm text-slate-600">Real content to snapshot.</p>
+    </div>
+    <div id="skel" class="relative mt-6 max-w-md min-h-[80px] rounded-xl border border-dashed border-slate-300"></div>
+    <script>
+      var root = document.getElementById('card')
+      var data = BoneyardTailwind.snapshotBones(root, 'card')
+      BoneyardTailwind.mountSkeleton(document.getElementById('skel'), data)
+    </script>
+  </body>
+</html>
